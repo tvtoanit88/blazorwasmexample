@@ -1,0 +1,44 @@
+﻿@inject HttpClient client
+@using System.Reflection
+@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@inject LazyAssemblyLoader AssemblyLoader 
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="lazyLoadedAssemblies" OnNavigateAsync="@OnNavigateAsync">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+@code{
+    private List<Assembly> lazyLoadedAssemblies = new();
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        try
+        {
+            if (args.Path == "test")
+            {
+                var stream = await client.GetStreamAsync("/BlazorApp2.wasm");
+                if (stream is not null)
+                {
+
+                    var asm = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromStream(stream);
+                    lazyLoadedAssemblies.Clear();
+                    lazyLoadedAssemblies.Add(asm);
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+        }
+        finally
+        {
+
+        }
+    }
+}

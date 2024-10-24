@@ -1,0 +1,29 @@
+﻿@page "/test"
+@inject HttpClient client
+@if (type is not null)
+{
+    <DynamicComponent Type="type"></DynamicComponent>
+}
+@code{
+    Type type = default!;
+    private string AppName { get; set; } = string.Empty;
+    private async Task ComponentLoadAsync()
+    {
+        var stream = await client.GetStreamAsync("/BlazorApp1.wasm");
+        if (stream is not null)
+        {
+            var asm = System.Runtime.Loader.AssemblyLoadContext.Default.LoadFromStream(stream);
+            var pageType = asm.GetType("BlazorApp1.Pages.Home");
+            if (pageType is not null) type = pageType;
+            StateHasChanged();
+        }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ComponentLoadAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

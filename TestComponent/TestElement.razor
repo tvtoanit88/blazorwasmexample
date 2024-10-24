@@ -1,0 +1,7 @@
+﻿<button type="button" style="" @onclick="(()=>ClickEvent.InvokeAsync())">Click me</button>
+
+@code {
+    [Parameter]       
+    
+    public EventCallback ClickEvent { get; set; }
+}

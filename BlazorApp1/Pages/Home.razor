@@ -1,0 +1,17 @@
+﻿@page "/app1/test"
+
+<TestComponent.TestElement ClickEvent="ChangEvent"></TestComponent.TestElement>
+@if (_isShow)
+{
+    <h4>Welcome to Asp.Net Cor Webassembly.</h4>
+}
+@code{
+    private bool _isShow;
+    private async Task ChangEvent()
+    {
+        await Task.Run(() =>
+        {
+            _isShow = !_isShow;
+        });
+    }
+}
