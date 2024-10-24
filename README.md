@@ -1,0 +1,2 @@
+# blazorwasmexample
+Example Dynamic Load
